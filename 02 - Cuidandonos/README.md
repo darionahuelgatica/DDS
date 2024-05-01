@@ -5,4 +5,4 @@
 * Ortiz Stephanie
   * stortiz@frba.utn.edu.ar
 
-![Diagrama de Clases](DiagramaDeClases.png)
+![Diagrama de Clases](Diagramas/Domain.png)
