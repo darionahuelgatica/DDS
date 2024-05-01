@@ -1,0 +1,116 @@
+@startuml
+
+class Persona {
++ nombre: String
++ apellido: String
+- direccion: Direccion
+- edad: int
+- sexo: Sexo
+- usuario: Usuario
+- inbox: Inbox
++ notificar(mensaje: String): void
++ silenciarInbox(): void
++ activarInbox(): void
+}
+Persona --> Direccion
+Persona --> Usuario
+
+enum Sexo {
+MASCULINO
+FEMENINO
+OTRO
+}
+Sexo --* Persona
+
+class Usuario {
++ nombreUsuario: String
++ tipo: TipoUsuario
+}
+
+enum TipoUsuario {
+ACTIVO
+PASIVO
+}
+TipoUsuario --* Usuario
+
+class Direccion {
++ calle: String
++ altura: Int
++ localidad: String
++ partido: String
++ provincia: String
++ codigoPostal: String
+}
+
+class Trayecto {
++ transeunte: Persona
++ origen: Direccion
++ destino: Direccion
++ cuidadores: List<Persona>
++ reaccionesIncidente: List<ReaccionIncidente>
+- demoraEstimada: Int
++ comenzar(): void
++ finalizar(): void
+- asumirIncidente(): void
+}
+Trayecto --> Direccion
+Trayecto --> Persona
+Trayecto --> ReaccionIncidente
+Trayecto --> IEstimadorDemoras
+
+'adapter
+interface IEstimadorDemoras {
++ estimarDemora(Direccion, Direccion): Int
+}
+
+'adapterConcretoA
+class DefaultEstimadorDemoras implements IEstimadorDemoras {
+- CONST_VELOCIDAD_PEATONES: Int
+- distanciaAPI: DistanceMatrixAPI
++ estimarDemora(Direccion, Direccion): Int
+}
+DefaultEstimadorDemoras ..> DistanceMatrixAPI
+
+'adaptada
+class DistanceMatrixAPI {
++ calcularDistanciaMetros(Direccion, Direccion): double
+}
+
+class Inbox {
+- persona: Persona
+- notificaciones: List<Notificacion>
+- silenciado: Bool
++ notificar(mensaje: String)
+}
+Persona --* Inbox
+Inbox --> Notificacion
+
+class Notificacion {
+- persona: Persona
+- mensaje: Mensaje
+- enviada: Bool
+}
+
+abstract ReaccionIncidente {
+# trayecto: Trayecto
+- reaccionar(): void
+}
+
+class alertarCuidadores implements ReaccionIncidente {
+- reaccionar(): void
+}
+
+class llamarPolicia implements ReaccionIncidente {
+- reaccionar(): void
+}
+
+class llamarTranseunte implements ReaccionIncidente {
+- reaccionar(): void
+}
+
+class prorroga implements ReaccionIncidente {
++ minutos: Int
+- reaccionar(): void
+}
+
+@enduml
