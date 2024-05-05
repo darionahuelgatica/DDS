@@ -25,6 +25,7 @@ Sexo --* Persona
 class Usuario {
 + nombreUsuario: String
 + tipo: TipoUsuario
++ setTipo(TipoUsuario): void
 }
 
 enum TipoUsuario {
@@ -47,15 +48,17 @@ class Trayecto {
 + origen: Direccion
 + destino: Direccion
 + cuidadores: List<Persona>
-+ reaccionesIncidente: List<ReaccionIncidente>
++ reaccionesIncidente: List<IReaccionIncidente>
 - demoraEstimada: Int
++ notificarCuidadores(mensaje: String): void
++ agregarCuidador(Persona): void
 + comenzar(): void
 + finalizar(): void
 - asumirIncidente(): void
 }
 Trayecto --> Direccion
 Trayecto --> Persona
-Trayecto --> ReaccionIncidente
+Trayecto --> IReaccionIncidente
 Trayecto --> IEstimadorDemoras
 
 'adapter
@@ -91,26 +94,33 @@ class Notificacion {
 - enviada: Bool
 }
 
-abstract ReaccionIncidente {
-# trayecto: Trayecto
-- reaccionar(): void
+abstract IReaccionIncidente {
++ reaccionar(trayecto: Trayecto): void
 }
 
-class alertarCuidadores implements ReaccionIncidente {
-- reaccionar(): void
+class alertarCuidadores implements IReaccionIncidente {
+- reaccionar(trayecto: Trayecto): void
 }
 
-class llamarPolicia implements ReaccionIncidente {
-- reaccionar(): void
-}
-
-class llamarTranseunte implements ReaccionIncidente {
-- reaccionar(): void
-}
-
-class prorroga implements ReaccionIncidente {
+class prorroga implements IReaccionIncidente {
 + minutos: Int
-- reaccionar(): void
+- reaccionar(trayecto: Trayecto): void
+}
+
+class llamarPolicia implements IReaccionIncidente {
+- CONST_NUMERO_POLICIA: int
+- reaccionar(trayecto: Trayecto): void
+}
+llamarPolicia --> LlamadorTelefonico
+
+class llamarUsuario implements IReaccionIncidente {
+- telefono: int
+- reaccionar(trayecto: Trayecto): void
+}
+llamarUsuario --> LlamadorTelefonico
+
+class LlamadorTelefonico {
+llamar(numero: int, mensaje: String): void
 }
 
 @enduml

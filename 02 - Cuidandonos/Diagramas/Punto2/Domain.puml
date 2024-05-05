@@ -1,0 +1,153 @@
+@startuml
+
+class Persona {
++ nombre: String
++ apellido: String
+- direccion: Direccion
+- edad: int
+- sexo: Sexo
+- usuario: Usuario
+- inbox: Inbox
++ notificar(mensaje: String): void
++ silenciarInbox(): void
++ activarInbox(): void
+}
+Persona --> Direccion
+Persona --> Usuario
+
+enum Sexo {
+MASCULINO
+FEMENINO
+OTRO
+}
+Sexo --* Persona
+
+class Usuario {
++ nombreUsuario: String
++ tipo: TipoUsuario
++ setTipo(TipoUsuario): void
+}
+
+enum TipoUsuario {
+ACTIVO
+PASIVO
+}
+TipoUsuario --* Usuario
+
+class Direccion {
++ calle: String
++ altura: Int
++ localidad: String
++ partido: String
++ provincia: String
++ codigoPostal: String
+}
+
+class Trayecto {
++ transeunte: Persona
++ secciones: List<Seccion>
++ cuidadores: List<Persona>
++ reaccionesIncidente: List<IReaccionIncidente>
++ estrategia: EstrategiaTrayecto
++ notificarCuidadores(mensaje: String): void
++ agregarCuidador(Persona): void
++ comenzar(): void
++ avanzar(): void
++ finalizar(): void
++ asumirIncidente(Trayecto): void
+}
+Trayecto --> Seccion
+Trayecto --> Persona
+Trayecto --> IReaccionIncidente
+Trayecto --> EstrategiaTrayecto
+
+class Seccion {
++ trayecto: Trayecto
++ origen: Direccion
++ destino: Direccion
+}
+Seccion --> Direccion
+
+abstract EstrategiaTrayecto{
++ trayecto: Trayecto
++ calcularDemora(Trayecto): int
++ calcularDemora(Seccion): int
++ asumirIncidente(Trayecto): void
+}
+
+class EstrategiaPorParadas extends EstrategiaTrayecto {
++ demoraPorParadas: int
++ calcularDemora(Seccion): int
++ asumirIncidente(Trayecto): void
+}
+EstrategiaPorParadas --> IEstimadorDemoras
+
+class EstrategiaPuntoAPunto extends EstrategiaTrayecto {
++ calcularDemora(Seccion): int
++ asumirIncidente(Trayecto): void
+}
+EstrategiaPuntoAPunto --> IEstimadorDemoras
+
+'adapter
+interface IEstimadorDemoras {
++ estimarDemora(Direccion, Direccion): Int
+}
+
+'adapterConcretoA
+class DefaultEstimadorDemoras implements IEstimadorDemoras {
+- CONST_VELOCIDAD_PEATONES: Int
+- distanciaAPI: DistanceMatrixAPI
++ estimarDemora(Direccion, Direccion): Int
+}
+DefaultEstimadorDemoras ..> DistanceMatrixAPI
+
+'adaptada
+class DistanceMatrixAPI {
++ calcularDistanciaMetros(Direccion, Direccion): double
+}
+
+class Inbox {
+- persona: Persona
+- notificaciones: List<Notificacion>
+- silenciado: Bool
++ notificar(mensaje: String)
+}
+Persona --* Inbox
+Inbox --> Notificacion
+
+class Notificacion {
+- persona: Persona
+- mensaje: Mensaje
+- enviada: Bool
+}
+
+abstract IReaccionIncidente {
++ reaccionar(trayecto: Trayecto): void
+}
+
+class alertarCuidadores implements IReaccionIncidente {
+- reaccionar(trayecto: Trayecto): void
+}
+
+class prorroga implements IReaccionIncidente {
++ minutos: Int
+- reaccionar(trayecto: Trayecto): void
+}
+
+class llamarPolicia implements IReaccionIncidente {
+- CONST_NUMERO_POLICIA: int
+- reaccionar(trayecto: Trayecto): void
+}
+llamarPolicia --> LlamadorTelefonico
+
+class llamarUsuario implements IReaccionIncidente {
+- telefono: int
+- reaccionar(trayecto: Trayecto): void
+}
+llamarUsuario --> LlamadorTelefonico
+
+class LlamadorTelefonico {
+llamar(numero: int, mensaje: String): void
+}
+
+@enduml

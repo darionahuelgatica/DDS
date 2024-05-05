@@ -5,4 +5,10 @@
 * Ortiz Stephanie
   * stortiz@frba.utn.edu.ar
 
-![Diagrama de Clases](Diagramas/Domain.png)
+## Justificaciones
+Ver Justificaciones.pdf
+
+## Punto 1
+![Diagrama de Clases](Diagramas/Punto1/Domain.png)
+## Punto 2
+![Diagrama de Clases](Diagramas/Punto2/Domain.png)
